@@ -1,0 +1,145 @@
+body {
+    background-color: #EBEAEF;
+    font-family: "Open Sans";
+}
+
+button:focus {
+	outline: none;
+}
+
+button::-moz-focus-inner {
+  border: 0;
+}
+
+.container {
+    width: 550px;
+    margin: auto;
+}
+
+.insert-post {
+	margin-bottom: 5px;    
+    padding: 15px;
+    background-color: #FFF;
+}
+
+.insert-post textarea, .insert-post input[type='submit'] {
+	font-family: 'Open Sans';
+}
+.insert-post input[type='submit'] {
+    padding: 5px 25px;
+    background-color: #FFF;
+    font-weight: 300;
+}
+
+.insert-post input[type='submit']:hover {
+    background-color: rgb(242, 242, 242);
+}
+
+.insert-post input[type='submit']:disabled {
+    border: 1px solid rgb(242, 242, 242);
+    color: rgb(221, 221, 221);
+}
+
+.insert-post input[type='submit']:enabled {
+    border: 1px solid rgb(189, 189, 189);
+    cursor: pointer;   
+    color: rgb(0, 0, 0);    
+}
+
+.insert-post textarea {
+    width: calc(100% - 22px);
+    height: 80px;
+    margin: 15px 0px;
+    border: 1px solid rgb(189, 189, 189);
+    outline-style: none;
+    font-size: 13px;
+    padding: 10px;
+}
+
+.insert-post label {
+    color: rgb(121, 121, 123);
+}
+
+.post-container {
+    display: none;
+	position: relative;
+    margin: auto;
+    padding: 15px;
+    border-bottom: 1px solid rgb(219, 219, 219);
+    background-color: #FFF;
+}
+
+.post-container .header {
+
+}
+
+.post-container .footer {
+	
+}
+
+.post-container:hover .post-delete {
+	display: block;
+}
+
+.post-author {
+    position: relative;
+    top: -10px;
+    font-size: 13px;
+    font-weight: bold;
+    color: rgb(121, 111, 111);    
+}
+
+.post-date {
+    float: right;
+    margin-top: 7px;
+    font-size: 11px;
+    color: rgb(121, 111, 111);
+}
+
+.post-count {
+    display: inline-block;
+    position: relative;
+    top: -1px;
+    font-size: 11px;
+}
+
+.post-author-avatar {
+    width: 32px;
+    height: 32px;
+    margin-right: 15px;
+}
+
+.post-content {
+    font-size: 13px;
+}
+
+.post-like {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border: 0;
+    background: url('../images/like.png') no-repeat;
+    text-indent: -9999px;
+}
+
+.post-share {
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+    border: 0;
+    background: url('../images/share.png') no-repeat;
+    text-indent: -9999px;
+}
+
+.post-delete {
+	display: none;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	width: 16px;
+	height: 16px;
+	margin: 8px 2px;
+	cursor: pointer;
+	background: url('../images/close.png') no-repeat;
+	background-size: 70%;
+}
