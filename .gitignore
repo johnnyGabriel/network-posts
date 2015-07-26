@@ -1,1 +1,2 @@
-assets/lib/*
+node_modules/*
+src/assets/libs/*

@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Backbone</title>
+        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="assets/css/main.css" />
+        <script id="post-view-template" type="text/html">
+                <div class="header">
+                    <img class="post-author-avatar" src=" {{ user.avatar }} " />
+                    <span class="post-author"> {{user.username}} </span>
+                    <span class="post-date"> {{ timeSincePost }} </span> 
+                </div> 
+                <p class="post-content"> {{content}} </p>
+                <div class="footer">
+                    <button class="post-like">Like</button>
+                    <span class="post-count"> {{ likes }} </span>
+                    <button class="post-share">Share</button>
+                    <span class="post-count"> {{ share }} </span>
+                </div>
+                <span class="post-delete"></span>
+        </script>
+        <script id="insert-post-template" type="text/html">
+            <div class="insert-post">
+                <form>
+                    <label>Conteúdo do Post
+                        <textarea id="postContent"></textarea>
+                    </label>
+                    <input type="submit" value="Postar" disabled />
+                </form>
+            </div> 
+        </script>
+    </head>
+    <body>
+
+		<div class="container">
+
+             <div id="form-insert-post"></div>
+             <div id="container-posts"></div>
+
+        </div>
+
+        <script src="assets/libs/jquery.min.js"></script>        
+        <script src="assets/libs/underscore-min.js"></script>     
+        <script src="assets/libs/mustache.min.js"></script>     
+        <script src="assets/libs/backbone-min.js"></script>     
+        <script src="assets/js/main.js"></script>
+        
+    </body>
+</html>
