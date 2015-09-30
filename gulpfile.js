@@ -22,7 +22,7 @@ gulp.task('watch', function() {
 	gulp.watch('src/assets/js/**/*.js', function(event) {
 		gutil.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
 		gulp.run('minify');
-	})
+	});
 });
 
 var files = [

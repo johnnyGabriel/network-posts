@@ -8,13 +8,14 @@
   "ignore": [
     "**/.*",
     "node_modules",
-    "bower_components",
+    "src/assets/libs",
     "test",
     "tests"
   ],
   "dependencies": {
-    "backbone": "~1.2.1",
+    "backbonefire": "~0.5.1",
     "jquery": "~2.1.4",
-    "mustache": "~2.1.2"
+    "mustache": "~2.1.2",
+    "pure": "~0.6.0"
   }
 }

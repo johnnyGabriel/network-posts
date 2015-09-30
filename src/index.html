@@ -5,27 +5,32 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Backbone</title>
         <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,400,300,600' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="assets/libs/pure/pure-min.css" />
+        <link rel="stylesheet" type="text/css" href="assets/libs/pure/base-min.css" />
+        <link rel="stylesheet" type="text/css" href="assets/libs/pure/grids-responsive-min.css" />
         <link rel="stylesheet" type="text/css" href="assets/css/main.css" />
         <script id="post-view-template" type="text/html">
-                <div class="header">
+            <article>
+                <header>
                     <img class="post-author-avatar" src=" {{ user.avatar }} " />
                     <span class="post-author"> {{user.username}} </span>
                     <span class="post-date"> {{ timeSincePost }} </span> 
-                </div> 
+                </header> 
                 <p class="post-content"> {{content}} </p>
-                <div class="footer">
+                <footer>
                     <button class="post-like">Like</button>
                     <span class="post-count"> {{ likes }} </span>
                     <button class="post-share">Share</button>
                     <span class="post-count"> {{ share }} </span>
-                </div>
+                </footer>
                 <span class="post-delete"></span>
+            </article>
         </script>
         <script id="insert-post-template" type="text/html">
             <div class="insert-post">
                 <form>
                     <label>Conteúdo do Post
-                        <textarea id="postContent"></textarea>
+                        <textarea id="postContent" placeholder="Poste algo aqui..."></textarea>
                     </label>
                     <input type="submit" value="Postar" disabled />
                 </form>
@@ -34,17 +39,19 @@
     </head>
     <body>
 
-		<div class="container">
-
-             <div id="form-insert-post"></div>
-             <div id="container-posts"></div>
-
-        </div>
-
+        <main>
+            <div class="pure-g container">
+                 <div class="pure-u-1" id="form-insert-post"></div>
+                 <div class="pure-u-1" id="container-posts"></div>
+            </div>
+        </main>
+		
         <script src="assets/libs/jquery/dist/jquery.min.js"></script>        
-        <script src="assets/libs/underscore/underscore-min.js"></script>     
         <script src="assets/libs/mustache/mustache.min.js"></script>     
+        <script src="assets/libs/firebase/firebase.js"></script>     
+        <script src="assets/libs/underscore/underscore-min.js"></script>     
         <script src="assets/libs/backbone/backbone-min.js"></script>     
+        <script src="assets/libs/backbonefire/dist/backbonefire.min.js"></script>  
         <script src="assets/js/main.js"></script>
         
     </body>

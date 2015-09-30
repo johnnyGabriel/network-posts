@@ -10,10 +10,15 @@ $(function() {
 				username: "Visitante",
 				avatar: "assets/images/avatar.png"
 			},
-			date: "",
-			content: "",
-			likes: "",
-			share: ""
+			date: null,
+			content: null,
+			likes: 0,
+			share: 0
+		},
+		validate: function(attrs) {
+			if (attrs.content.length === 0) {
+				return "Dados inválidos!";
+			}
 		},
 		toTemplate: function() {
 
@@ -24,7 +29,7 @@ $(function() {
 		},
 		timeSincePost: function() {
 
-			var measure = [[1000, 'segundo'], [60, 'minuto'], [60, 'hora'], [24, 'dia'], [7, 'semana'], [4, 'mese'], [12, 'ano']];
+			var measure = [[1000, 'segundo', 'segundos'], [60, 'minuto', 'minutos'], [60, 'hora', 'horas'], [24, 'dia', 'dias'], [7, 'semana', 'semanas'], [4, 'mês', 'meses'], [12, 'ano', 'anos']];
 			var passedTime = Date.now() - Date.parse(this.get('date'));
 			var temp = passedTime;
 			var i = 0;
@@ -40,7 +45,7 @@ $(function() {
 				i++;
 			}
 
-			return (i === 0 ? "agora mesmo" : parseInt(passedTime) + " " + (parseInt(passedTime) === 1 ? measure[i-1][1] : measure[i-1][1] + "s") + " atrás");
+			return (i === 0 ? "agora mesmo" : parseInt(passedTime) + " " + (parseInt(passedTime) === 1 ? measure[i-1][1] : measure[i-1][2]) + " atrás");
 		
 		},
 		like: function() {
@@ -52,10 +57,11 @@ $(function() {
 	});
 
 	//Post Collection
-	var PostCollection = Backbone.Collection.extend({
+	var PostCollection = Backbone.Firebase.Collection.extend({
 		model: PostModel,
+		url: 'https://backbone-posts.firebaseio.com/posts',
 		initialize: function() {
-			this.readLocal();
+			this.fetch();
 		},	
 		saveLocal: function() {
 			localStorage.setItem('posts', JSON.stringify(this.models));
@@ -95,13 +101,13 @@ $(function() {
 			this.$el.html(html);
 			return this;
 		},
-		removePost: function() {
+		remove: function() {
 			this.$el.slideUp('normal', function() {
 				this.remove();
 			});
 		},
 		deletePost: function() {
-			this.model.unset('user');
+			this.model.destroy();
 		},
 		likePost: function() {
 			this.model.like();
@@ -115,45 +121,49 @@ $(function() {
 	var PostInsertView = Backbone.View.extend({
 		template: $('#insert-post-template').html(),
 		events: {
-			"keyup #postContent" : "enablePostButton",
+			"input #postContent" : "enablePostButton",
+			"keyup" : "insertPost",
 			"submit" : "insertPost"
 		},
-		initialize: function(model) {
+		initialize: function() {
 			this.render();
-		},
-		render: function() {
-
-			var html = Mustache.to_html(this.template, this.model.toJSON());
-			this.$el.html(html);
 			this.inputContent = this.$el.find("#postContent");
 			this.submitButton = this.$el.find("input[type='submit']");
-			return this;
-
+		},
+		render: function() {
+			var html = Mustache.to_html(this.template, this.model.toJSON());
+			this.$el.html(html);
+		},
+		reset: function() {
+			this.$el.find('textarea').val('');
+			this.enablePostButton();
 		},
 		enablePostButton: function() {
-
-			// habilita / desabilita o envio do formulário de novo post
+			// habilita o envio apenas se o post conter dados
 			if (this.inputContent.val().length > 0) {
 				this.submitButton.prop('disabled', false);
 			} else {
 				this.submitButton.prop('disabled', true);
 			}
-
 		},
 		insertPost: function(e) {
+
+			//verifica se a tecla ENTER foi pressionada
+			if ((e.type === 'keyup') && (e.which !== 13))  {
+				return false;
+			}
 
 			e.preventDefault();
 
 			// seta as informações do post no Model
-			this.model.set({
-				date: new Date(),
-				content: this.inputContent.val(),
-				likes: 0,
-				share: 0
-			});
+			this.model.set('date', new Date().toISOString());
+			this.model.set('content', this.inputContent.val().replace(/\n/g, ''));
 
-			// reseta o formulário de inserção de post
-			this.render();
+			//verifica os dados e grava se for válido, depois reseta o form
+			if (this.model.isValid()) {
+				this.collection.create(this.model.clone().attributes);
+				this.reset();
+			}
 		}
 	});
 
@@ -164,75 +174,47 @@ $(function() {
 
 			_.bindAll(this, 'showPost', 'showAllPosts');
 
+			// armazena em variáveis os elementos containers dé formulário e posts
 			this.elFormInsert = this.$el.find('#form-insert-post');
 			this.elPosts = this.$el.find('#container-posts');
 
-			// Model do formulário de inserção de novo post
-			this.newPostModel = new PostModel();
-
-			this.newPostModel.on('change', function(model) {
-				this.postCollection.add(model.clone());
+			// instância a collection da view
+			this.collection = new PostCollection();
+			this.collection.on({
+				"add": this.showPost
 			}, this);
 
-			// View do formulário de inserção de novo post
-			var postInsert = new PostInsertView({ model: this.newPostModel });
-
-			// insere no documento o formulário de inserção de novo post
-			this.elFormInsert.append(postInsert.render().el);
-
-			// Collection de posts
-			this.postCollection = new PostCollection();
-
-			this.postCollection.on('update', function() {
-				this.postCollection.saveLocal();
-			}, this);
-
-			this.postCollection.on('add', function(model) {
-				this.showPost(model);
-			}, this);
-			
-			// insere no documento todos os posts
-			this.showAllPosts();
-
+			// cria uma nova instância do formulário de inserir post
+			var postInsert = new PostInsertView({ 
+				model: new PostModel(),
+				collection: this.collection,
+				el: this.elFormInsert
+			});
 		},
 		showPost: function(post) {
 
-			// View do post
+			// Cria uma nova instância da view Post usando o model passado por parâmetro
 			var postView = new PostView({
 				model: post
 			});
-
-			post.on('change:user', function(model) {
-				postView.removePost();
-				this.postCollection.remove(model);
-			}, this);
-
-			post.on('change:likes', function() {
-				postView.render();
-				this.postCollection.saveLocal();
-			}, this);
-
-			post.on('change:share', function() {
-				postView.render();
-				this.postCollection.saveLocal();
-			}, this);
+			postView.model.on({
+				"destroy" : postView.remove,
+				"change:likes change:share": postView.render
+			}, postView);
 
 			// insere no documento o post
-			this.elPosts.prepend(postView.render().el);
-
-			// executa a animação de entrada do post
-			postView.$el.slideDown('normal');
+			this.elPosts.prepend(postView.render().el).promise().done(function() {
+				postView.$el.slideDown('normal');
+			});
 
 			// atualiza os dados do post a cada 1 minuto
-			setInterval(function() {
-				postView.render();
-			}, 1 * 60000);
+			setInterval(_.bind(postView.render, postView), 1 * 60000);
 
 		},
 		showAllPosts: function() {
 
 			this.elPosts.html('');
-			this.postCollection.each(this.showPost);
+			this.collection.each(this.showPost);
 
 		}
 	});

@@ -1,8 +1,20 @@
+html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+    /* Set your content font stack here: */
+    font-family: "Open Sans", "Times New Roman", serif;
+}
 body {
     background-color: #EBEAEF;
-    font-family: "Open Sans";
 }
-
+main {
+    width: 550px;
+    margin: auto;
+}
+@media screen and (max-width: 768px) {
+    main {
+        width: 100%;
+    }
+}
 button:focus {
 	outline: none;
 }
@@ -12,8 +24,8 @@ button::-moz-focus-inner {
 }
 
 .container {
-    width: 550px;
-    margin: auto;
+    /*width: 550px;*/
+    /*margin: auto;*/
 }
 
 .insert-post {
@@ -99,7 +111,7 @@ button::-moz-focus-inner {
 .post-count {
     display: inline-block;
     position: relative;
-    top: -1px;
+    top: -5px;
     font-size: 11px;
 }
 
