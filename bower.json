@@ -17,5 +17,8 @@
     "jquery": "~2.1.4",
     "mustache": "~2.1.2",
     "pure": "~0.6.0"
+  },
+  "resolutions": {
+    "firebase": "2.0.x"
   }
 }

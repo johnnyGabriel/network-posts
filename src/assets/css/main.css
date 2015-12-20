@@ -155,3 +155,7 @@ button::-moz-focus-inner {
 	background: url('../images/close.png') no-repeat;
 	background-size: 70%;
 }
+.loading {
+    margin: 30px 0;
+    text-align: center;
+}

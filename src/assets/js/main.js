@@ -1,4 +1,4 @@
-/* global Mustache, Backbone, _ */
+/* global Firebase, Mustache, Backbone, _ */
 
 $(function() {
 	
@@ -59,10 +59,8 @@ $(function() {
 	//Post Collection
 	var PostCollection = Backbone.Firebase.Collection.extend({
 		model: PostModel,
-		url: 'https://backbone-posts.firebaseio.com/posts',
-		initialize: function() {
-			this.fetch();
-		},	
+		// url: 'https://backbone-posts.firebaseio.com/posts',
+		url: new Firebase('https://backbone-posts.firebaseio.com/posts').limitToLast(10),
 		saveLocal: function() {
 			localStorage.setItem('posts', JSON.stringify(this.models));
 		},
@@ -161,7 +159,7 @@ $(function() {
 
 			//verifica os dados e grava se for válido, depois reseta o form
 			if (this.model.isValid()) {
-				this.collection.create(this.model.clone().attributes);
+				this.collection.add(this.model.clone().attributes);
 				this.reset();
 			}
 		}
@@ -204,7 +202,7 @@ $(function() {
 
 			// insere no documento o post
 			this.elPosts.prepend(postView.render().el).promise().done(function() {
-				postView.$el.slideDown('normal');
+				postView.$el.slideDown(600);
 			});
 
 			// atualiza os dados do post a cada 1 minuto
