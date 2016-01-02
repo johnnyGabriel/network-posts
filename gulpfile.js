@@ -1,43 +1,39 @@
-var gulp = require('gulp');
-var gutil = require('gulp-util');
-var uglify = require('gulp-uglify');
-var uglifycss = require('gulp-uglifycss');
-var watch = require('gulp-watch');
+var gulp = require('gulp'),
+	gulpif = require('gulp-if'),
+	uglify = require('gulp-uglify'),
+	minifyCss = require('gulp-minify-css'),
+	bundle = require('gulp-useref'),
+	watch = require('gulp-watch'),
+	server = require('gulp-server-livereload');
 
-gulp.task('minify', function() {
-	return gulp
-			.src('src/assets/js/**/*.js')
-			.pipe(uglify())
-			.pipe(gulp.dest('build/assets/js'));
-});
-
-gulp.task('minifycss', function() {
-	return gulp
-			.src('src/assets/css/**/*.css')
-			.pipe(uglifycss())
-			.pipe(gulp.dest('build/assets/css'));
+gulp.task('bundle', function() {
+	var assets = bundle.assets();
+	return gulp.src('src/*.html')
+			.pipe(assets)
+			.pipe(gulpif('*.js', uglify()))
+			.pipe(gulpif('*.css', minifyCss({
+				aggressiveMerging: false
+			})))
+			.pipe(assets.restore())
+			.pipe(bundle())
+			.pipe(gulp.dest('build'));
 });
 
 gulp.task('watch', function() {
-	gulp.watch('src/assets/js/**/*.js', function(event) {
-		gutil.log('File ' + event.path + ' was ' + event.type + ', running tasks...');
-		gulp.run('minify');
+	gulp.watch(['src/**/*.js', 'src/**/*.css', 'src/**/*.html'], function() {
+		gulp.start('bundle');
 	});
 });
 
-var files = [
-	'src/assets/libs/jquery/dist/jquery.min.js', 
-	'src/assets/libs/backbone/backbone-min.js',
-	'src/assets/libs/mustache/mustache.min.js',
-	'src/assets/libs/underscore/underscore-min.js'
-];
-gulp.task('copy-files', function() {
-	gulp.src(files)
-	.pipe(gulp.dest('build/assets/libs/'));
-
-	gulp.src('src/index.html')
-	.pipe(gulp.dest('build/'));
-
-	gulp.src('src/assets/images/*')
-	.pipe(gulp.dest('build/assets/images'));
+gulp.task('server', function() {
+	gulp.src('build')
+			.pipe(server({
+				livereload: true,
+				open: true,
+				defaultFile: 'index.html'
+			}));
 });
+
+gulp.task('build', ['watch', 'server']);
+
+gulp.task('default', ['build']);
